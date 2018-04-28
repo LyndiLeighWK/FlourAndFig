@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 add_action( 'init', 'ff_init' );
+//add_action('wp_head', 'mailchimp_popup_js');
+//add_action('woocommerce_before_shop_loop', 'add_header_image_to_shop_page');
+add_action( 'woocommerce_before_main_content', 'add_header_image_to_shop_page', 20, 0 );
 
 function ff_init() {
 	wp_register_style( 'bootstrap', plugin_dir_url(__FILE__) . 'bootstrap.min.css' );
@@ -27,6 +30,11 @@ function script_shortcode( $atts, $content = null ) {
 	return '<span class="script">' . $content . '</span>';
 }
 add_shortcode( 'script', 'script_shortcode' );
+
+function button_shortcode( $atts, $content = null ) {
+	return '<a class="btn btn-primary btn-shortcode button" href="'. $atts['link'] . '">' . $atts['title'] . '</a>';
+}
+add_shortcode( 'button', 'button_shortcode' );
 
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
 
@@ -194,3 +202,43 @@ function storefront_site_title_or_logo( $echo = true ) {
 function woocommerce_checkout_coupon_form() {
 	return null;
 }
+
+function add_header_image_to_shop_page() {
+	if (is_shop()) { ?>
+		<header class="entry-header">
+			<?php
+			storefront_post_thumbnail( 'full' );
+			?>
+		</header><!-- .entry-header -->
+	<?php }
+}
+
+/*function mailchimp_popup_js() { ?>
+	<script>
+	    // Fill in your MailChimp popup settings below.
+	    // These can be found in the original popup script from MailChimp.
+	    var mailchimpConfig = {
+	        baseUrl: 'mc.us16.list-manage.com',
+	        uuid: 'e5429749eb5c934d3dd15d2aa',
+	        lid: '1051b6909f'
+	    };
+
+	    // No edits below this line are required
+	    var chimpPopupLoader = document.createElement("script");
+	    chimpPopupLoader.src = '//s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js';
+	    chimpPopupLoader.setAttribute('data-dojo-config', 'usePlainJson: true, isDebug: false');
+
+	    var chimpPopup = document.createElement("script");
+	    chimpPopup.appendChild(document.createTextNode('require(["mojo/signup-forms/Loader"], function (L) { L.start({"baseUrl": "' +  mailchimpConfig.baseUrl + '", "uuid": "' + mailchimpConfig.uuid + '", "lid": "' + mailchimpConfig.lid + '"})});'));
+
+	    jQuery(function ($) {
+	        document.body.appendChild(chimpPopupLoader);
+
+	        $(window).load(function () {
+	            document.body.appendChild(chimpPopup);
+	        });
+
+	    });
+	</script>
+	<!-- <script type="text/javascript" src="https://s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us16.list-manage.com","uuid":"e5429749eb5c934d3dd15d2aa","lid":"1051b6909f"}) })</script> -->
+<?php }*/
